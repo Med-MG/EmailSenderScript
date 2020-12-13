@@ -1,0 +1,13 @@
+{
+    "name": "medmg/sendingmail",
+    "description": "email sender script",
+    "require": {
+        "phpmailer/phpmailer": "^6.2"
+    },
+    "authors": [
+        {
+            "name": "MOUIGUINA MOHAMED",
+            "email": "mohamedmouiguina7@gmail.com"
+        }
+    ]
+}
