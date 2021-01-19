@@ -4,6 +4,7 @@
 
 
 
+use App\Config\Emails;
 use App\Content\Creative;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -15,17 +16,19 @@ require 'vendor/autoload.php';
 
 // Instantiation and passing `true` enables exceptions
 $mail = new PHPMailer(true);
+// Insrantiat emails class
+$Emails = new Emails();
+// Insrantiat Creative class
 $Creative = new Creative();
-$email = "laruos2121@gmail.com";
-
+// $email = "laruos2121@gmail.com";
 
 // Retrieve the email template required
 $message = file_get_contents('content/index.html');
+// Rerieve the emails
+$EmailArr = $Emails->GetEmails();
 
 
-
-
-try {
+    try {
     $mail->SMTPOptions = [
         'ssl' => [
             'verify_peer' => false,
@@ -45,28 +48,30 @@ try {
     $mail->Port       = 1025;                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
     //Recipients
-    $mail->setFrom('Admin@komiis.com', '=?UTF-8?B?RXhvZHVzIEVmZmVjdA==?=');
-    $mail->addAddress($email);     // Add a recipient
-    // $mail->addAddress('ellen@example.com');               // Name is optional
-    // $mail->addReplyTo('info@example.com', 'Information');
-    // $mail->addCC('cc@example.com');
-    // $mail->addBCC('bcc@example.com');
-
-    // Attachments
-    // $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-    // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
-
+    $mail->setFrom('Admin@komiis.com', '=?UTF-8?B?RXhvZHVzRWZmZWN0?=');
     // Content
     $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->Subject = "Hi {$Creative->UsernameFromEmail($email)} =?UTF-8?B?VGhlIEV4b2R1cyBFZmZlY3Q=?=";
     // $mail->Body =  $message;
     $mail->msgHTML($message);
     $mail->AltBody = strip_tags($message);
-    // $mail->Body    = 'This is the HTML message coool body <b>in bold!</b>';
-    // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
-    $mail->send();
+    foreach ($EmailArr as $email) {
+        try {
+            $mail->Subject = "Hi {$Creative->UsernameFromEmail($email)} =?UTF-8?B?VGhlIEV4b2R1cyBFZmZlY3Q=?=";
+            $mail->addAddress($email);     // Add a recipient
+
+            $mail->send(); // send to recipient
+
+            $mail->ClearAllRecipients(); // Clear all the recipients
+            echo 'Message has been sent';
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
+    }
     echo 'Message has been sent';
 } catch (Exception $e) {
     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 }
+
+
+
