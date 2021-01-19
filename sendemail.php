@@ -20,7 +20,7 @@ $email = "laruos2121@gmail.com";
 
 
 // Retrieve the email template required
-$message = file_get_contents('Content/index.html');
+$message = file_get_contents('content/index.html');
 
 
 
